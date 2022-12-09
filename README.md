@@ -1,4 +1,5 @@
 # Bike Sharing Analysis
+You can find a full analysis at https://agiq.github.io/bikesharing/
 A bike-sharing system is a service in which it made bikes available for shared use to individuals on a short-term basis for a price or free. The company is struggling to cope with the current market conditions. You feel that your business is being crippled by the lockdown, and that it will take a long time to recover once the lockdown is over. You feel you need to do something to prepare yourself for when things get back to normal. The consulting company wants to understand the factors affecting the demand for these shared bikes in the American market.
 
 

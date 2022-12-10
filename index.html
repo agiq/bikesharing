@@ -306,6 +306,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -428,6 +435,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -475,6 +489,8 @@ Based on various meteorological surveys and people's styles, the service provide
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">day</span>            <span class="mi">31</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
 </code></pre></div>
+<p>Let's get a concise summary print out of the dataframe. It shows index, dtypes, column types, non-null values, and memory usage. Out of the box, we have numerical data types. This is not the case as stated above.  So, let's convert appropriate variables to categorical data type.</p>
+<p><img align="center" alt="bike_df.info()" src="images/INFO.png" /></p>
 <p>Here's the code to convert data type.
 <div class="highlight"><span class="filename">Convert numberical to categorical variable</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">category_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;season&#39;</span><span class="p">,</span><span class="s1">&#39;mnth&#39;</span><span class="p">,</span><span class="s1">&#39;yr&#39;</span><span class="p">,</span><span class="s1">&#39;holiday&#39;</span><span class="p">,</span><span class="s1">&#39;weekday&#39;</span><span class="p">,</span><span class="s1">&#39;workingday&#39;</span><span class="p">,</span><span class="s1">&#39;weathersit&#39;</span><span class="p">,</span><span class="s1">&#39;day&#39;</span><span class="p">]</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">category_cols</span><span class="p">:</span>
@@ -483,7 +499,7 @@ Based on various meteorological surveys and people's styles, the service provide
 We ended up with the follow data set:</p>
 <ul>
 <li>There are 730 rows and 16 columns in this data set.</li>
-<li>There is 8 categorical data and 8 numerical data.</li>
+<li>There is 8 categorical data and 4 numerical data after we dropped 'registered', 'casual', 'instant', and 'atemp'. This because after analyzing the heatmap and correlation chart, we determined that those variables don't add any value to the model due.</li>
 <li>There is 0 missing data and 0 duplicate values</li>
 <li>The Target variable is 'cnt'</li>
 </ul>
@@ -530,7 +546,10 @@ You get very easy to interpret chart like this.
 <p>Stacked bar graphs show the percentage of people who have selected one or more options. A category chart is usually used to show how a large category is split into smaller parts and how these parts are related to the parent category. The one below depicts variable 'yr' against variable 'cnt'.  At a glance, we see 2019 has a huge increase in bike rental compared to a prior year. Please refer to the Jupyter Notebook for the rest of the charts.</p>
 <p><img align="center" alt="stacked" src="images/stacked.png" /></p>
 <p>The next visualization shows simple linear regression.  It provides a quick and computational inexpensive way to see our data. Both the left most and right most chart show the data set is linear in nature.  The residual plot shows the distribution of the data. Finally, the pattern plot error terms. It helps determine if there is any clear pattern.</p>
-<p><img align="center" alt="simple linear regression" src="images/slr.png" /></p>
+<p><img align="center" alt="simple linear regression" src="images/slr.png" />
+<img align="center" alt="simple linear regression" src="images/slr2.png" />
+<img align="center" alt="simple linear regression" src="images/slr3.png" /></p>
+<p>Note: 'hum' and 'windspeed' have downward linear regression lines.  The don't seem to contribute to bike rental prediction much.</p>
 <h3 id="step-3-data-preparation">Step 3: Data Preparation</h3>
 <p>The get_dummies function is used to convert categorical variables into dummy or indicator variables. Dummy variables can be either 0 or 1 encoding.  drop_first is important to use when using dummy variables, as it helps in reducing the extra column created during dummy variable creation.  The remaining columns become linearly independent.  As a result, it makes it easier to interpret the coefficients of the fitted model.</p>
 <div class="highlight"><span class="filename">create dummy variables</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">DUMMIES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;weathersit&#39;</span><span class="p">]</span>
@@ -596,11 +615,11 @@ This function takes two parameter input. x is the training set and m is the type
 <p>For the first model, we add one variable at a time in according with our correlation study above.
 Lets ignore the TARGET variable and start training the model with next highest correlated variables. Then, start add more variables.  R-squared is 89.9% with just one variable added. P-Value is zero. With two variables 'registered' and 'casual', R-squared was 1.00 with p-value of 0.00.</p>
 <p><div class="highlight"><span class="filename">add one variable at a time</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># build a model with one variables. Corr study shows that registered has the highest corr</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">X_train_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="s1">&#39;registered&#39;</span><span class="p">])</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">X_train_sm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="s1">&#39;temp&#39;</span><span class="p">])</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">train_model</span><span class="p">(</span><span class="n">X_train_sm</span><span class="p">,</span> <span class="n">mlr</span><span class="p">)</span>
 </code></pre></div>
 <img align="center" alt="OLS Regression Results" src="images/OLS1.png" /></p>
-<p>The next step is to add all variables at once.  Then, we remove one variable at time.  After that, we evaluate the R-squared and p-value.  Now, this is an unproductive way as we already knew that only two variables from the previous model put R-squared at 1.00.  Doing this can potentially overfit our model.  However, it is a great exercise to go through and see how the R-squared and p-values change with each iteration.  The process of how-to do that is below.</p>
+<p>Even after adding 'temp', 'mnth', and 'weekday', the R-squared only increased a tiny bit. The next step is to add all variables at once.  Then, we remove one variable at time.  After that, we evaluate the R-squared and p-value. The process of how-to do that is below.</p>
 <p><div class="highlight"><span class="filename">add all variables at once</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">X_train_lm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">train_model</span><span class="p">(</span><span class="n">X_train_lm</span><span class="p">,</span> <span class="n">mlr</span><span class="p">)</span>
 </code></pre></div>
@@ -612,19 +631,19 @@ After we added all variables, many of the p-values became significantly high. Th
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">train_model</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mlr</span><span class="p">)</span>
 </code></pre></div>
 <img align="center" alt="OLS Regression Results" src="images/OLS2.png" /></p>
-<p>Notice, the p-values are all over the map.  Also, the VIF value below the OLS Regression Result is above 10 for many of the variables.  The idea here is to select another variable with high value for both VIF and p-value as the next candidate to be dropped.  We iterate through this process until the p-values are between 0.005 and 0.000. After dropping 'instant', 'atemp', 'hum', 'workingday', 'holiday', 'windspeed', 'weekday', 'temp', 'mnth', 'yr', 'weathersit', we finally got p-values to significant value.</p>
+<p>Notice, with all variables added, R-squared climbed to 80.3%.  The p-values for 'mnth' and 'day' are higher then 0.005.  The VIF value below the OLS Regression Result is below 5, which isn't too bad.  The idea here is to select another variable with high value for both VIF and p-value as the next candidate to be dropped.  We iterate through this process until the p-values are between 0.005 and 0.000. After dropping 'mnth', 'day, 'hum', and 'workingday', we finally got p-values to significant value below 0.005.</p>
 <p><img align="center" alt="OLS Regression Results" src="images/OLS3.png" /></p>
 <h3 id="residual-analysis-of-the-mlr">Residual Analysis of the MLR</h3>
 <p>In this step, we check to see if the error terms are normally distributed.  We do this by plotting the histogram of the error terms and see what it looks like.</p>
 <p><img align="center" alt="Residual Analysis" src="images/error1.png" /></p>
-<p>A residual is positive or negative, depending on whether the predicted value is higher or lower than the observed value.  Negative residual means that the predicted value is too high. A regression line minimizes the sum of residuals.</p>
-<p>Just like the chart above, the model evaluation provides another glimpse at the spread of the data.</p>
+<p>A residual is positive or negative, depending on whether the predicted value is higher or lower than the observed value.  Negative residual means that the predicted value is too high. The chart above shows normal distribution.</p>
 <p><img align="center" alt="Evaluate MRL" src="images/pred_mlr.png" /></p>
-<p><div class="highlight"><span class="filename">evaluate the model</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_test_pred</span><span class="p">)</span>
+<p>Model evaluation is important.  We plot the different between predicted and actual.  This result shows a linear slope upward, which is a good sign.
+<div class="highlight"><span class="filename">evaluate the model</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_test_pred</span><span class="p">)</span>
 </code></pre></div>
-We get an r2_score of -1.504. R2 has no such thing as “the square of something.” It could be positive, negative or zero, depending on r2 is negative only when a chosen model does not follow the trend of the data. This model seems to be performing better than the others because it's been over-fitted.</p>
+We get an r2_score of 0.7799. R2 has no such thing as “the square of something.” It could be positive, negative or zero, depending on r2 is negative only when a chosen model does not follow the trend of the data. This model seems to be performing okay given the r2_score closer to 1.</p>
 <h2 id="perform-recursive-feature-elimination">Perform Recursive Feature Elimination</h2>
-<p>RFE is a good feature selection algorithm because it is easy to use and configurable. It is especially effective at identifying the important features. You need to decide how many features you want to use. This is the most important hyperparameter that you need to set.
+<p>RFE is a good feature selection algorithm because it is easy to use and configurable. It is especially effective at identifying the important features. You need to decide how many features you want to use. This is the most important hyperparameter that you need to set. In this case, we tell RFE to pick 10 features to work with.
 <div class="highlight"><span class="filename">RFE</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Importing RFE and LinearRegression</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">RFE</span>
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
@@ -637,8 +656,8 @@ We get an r2_score of -1.504. R2 has no such thing as “the square of something
 <a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="n">rfe</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">lm</span><span class="p">,</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="n">rfe</span> <span class="o">=</span> <span class="n">rfe</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </code></pre></div>
-Now, we check the support and the ranking. The support indicates whether or not a feature was chosen automatically. The variables with True and 1 to the right of it are chosen.
-<img align="center" alt="RFE 10 features" src="images/10features.png" /></p>
+Now, we check the support and the ranking. The support indicates whether or not a feature was chosen automatically. The variables with True and 1 to the right of it are chosen.</p>
+<p><img align="center" alt="RFE 10 features" src="images/10features.png" /></p>
 <p>Let's train our RFE model using the suggested rfe.support_ columns.
 <div class="highlight"><span class="filename">Train using RFE feature selection</span><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># We&#39;re going to manual train the model to initialize the variables.  Then, we&#39;ll use our prebuilt function above.</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">X_train_rfe</span> <span class="o">=</span> <span class="n">X_train</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
@@ -647,16 +666,24 @@ Now, we check the support and the ranking. The support indicates whether or not 
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">X_train_new</span> <span class="o">=</span> <span class="n">X_train_rfe</span>
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">rfe_model</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </code></pre></div></p>
-<p>Just like the above where we add all the variables, we train with all the rfe.support_ variables.  From the OLS Result below, we need to drop variables with the highest p-value first.  Just like before, we drop on at a time and iterate through the process until the p-value is below 0.005 or what ever is acceptable according to the domain subject-matter-expert.
+<p>Just like the above where we add all the variables, we train with all the rfe.support_ variables.  From the OLS Result below, we need to drop variables with the highest p-value first.  Just like before, we drop on at a time and iterate through the process until the p-value is below 0.005 or what ever is acceptable according to the domain subject-matter-expert. 'workingday' has the highest p-value.  Let's drop it first.
 <img align="center" alt="RFE Training" src="images/OLS_RFE.png" /></p>
-<p>We had to drop 'mnth', 'atempt', 'season', 'instant', 'weathersit_3', 'temp', 'yr', 'const' to get the OLS Regression Result to an acceptable state.  The R-squared is still 1.0.  All the p-values are at 0.0.  The VIF is below 5.</p>
+<p>The OLS Regression Result looks fantastic.  The R-squared is still 0.809.  All the p-values are in acceptable level  The VIF is below 5 as well.  'Const' has a high VIF.  We drop it. That didn't changethe R-squared. We can still drop any variable with p-value above 0.005, but I'm satisfied as it is currently. </p>
 <p><img align="center" alt="Evaluate MRL" src="images/final_RFE.png" /></p>
 <h3 id="residual-analysis-of-the-rfe">Residual Analysis of the RFE</h3>
-<p>Once again, Residual Analysis is on the negative side. However, the evaluation gives us a straight linear line, which might be overfitting.
+<p>Once again, Residual Analysis is normally distributed. However, the evaluation gives us an uptrend linear line, which is good.
 <img align="center" alt="RFE Error Term" src="images/rfe_error.png" /></p>
 <p>overfitting.
 <img align="center" alt="RFE Evaluation" src="images/rfe_eval.png" /></p>
-<p>Finally, the r2_score is 1.0.</p>
+<p>Finally, the r2_score is 78.9%. It is slightly better than the 77.9% that we got from manual training. The best part is that it was faster with minimal works required. So hybrid training is probably a good approach and highly recommended.</p>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li>Simple Linear Regression (SLR): temp displayed a linear red line upward. The residual analysis depicted via histogram is normally distributed. There is no identifiable pattern found.</li>
+<li>Multi Linear Regression (MLR): first add one variable, traing the model and reiterate. In this process, observe the R-squared and P-value. The second method is to add all variables. Then, remove the highest P-value one at a time. Utilize the corresponding high VIF value to identify the next highest variable to drop. Only drop one at a time. Manual model training is show the following variables contribute to higher bike rental: season, yr, holiday, weekday, weathersit, temp, and windspeed. With that we ended up with 77.8% R-square and 77.9% r2_score.</li>
+<li>Use Recursive Feature Elimination (RFE) to automate which features to include in training. After dropping unwanted variables, the R-squared is 80.9% and the r2_score is 78.9%. The following variables positively contribute to the model: 'season', 'yr','holiday','weekday','temp','hum','windspeed','weathersit_2' and 'weathersit_3'.</li>
+<li>Manual selection of variables for training is a tedious job. The automated feature selection is nice, but the computer is not a subject matter expert in your industry. Therefore, a hybrid approach is recommended.
+For each of the training method(SLR, MLR, and RFE), plot the error terms, and get r2_score. Also, plot y_test against y_test_pred on a scatter plot.</li>
+</ul>
 
 
 

@@ -14,7 +14,7 @@ A bike-sharing system is a service in which it made bikes available for shared u
 The objective is to find which variable(s) is/are significant in predicting bike rental 'cnt'.  First, perform exploratory data analysis. 
 
 - There are 730 rows and 16 columns in this data set.
-- The data set has 8 categorical data and 8 numerical data after data type conversion.
+- The data set has 8 categorical data and 4 numerical data after data type conversion.
 - Fortunately, there is 0 missing data and 0 duplicate values.
 - The Target variable is 'cnt'.
 - Binary columns (with 0 & 1) are: yr, holiday, and working day
@@ -34,11 +34,11 @@ Analysis of categorical data:
 - Day: It seems that bike rental occurs more in the middle of the month
 
 Analysis of numerical data showing correlation.
-- registered is 0.95
-- casual is 0.67
-- atemp, instant, temp are all 0.63
+- We drop 'instant' as it provides no real value in model training.  'instant' is assigned to each row.
+- Both 'registered' and 'casual' are highly correlateed to 'cnt' the target variable. They are dropped.
+- 'atemp' and 'temp' are are closely correlated so we drop 'atemp'.
 
-Next, do a groupby of each numeric variable with 'cnt' and plot them.  These chart provide a secondary confirmation that registered and casual are highly correlated. They show linear uptrend lines.
+Next, do a groupby of each numeric variable with 'cnt' and plot them. 'temp' vs 'cnt' show a linear uptrend.  'hum' and 'windspeed' were sideway as they don't appear to add much value to the model.
 
 As part of data visualization, conduct a stacked histogram plot to show which features in each categorical data are highest. This is to provide another confirmation of our observeration above.
 
@@ -46,9 +46,9 @@ For model training, validating, and evaluating, we perform simple linear regress
 
 
 ## Conclusions
-- Simple Linear Regression (SLR): temp, atemp, casual and registerd displayed a linear red line upward.  The residual analysis depicted via histogram is normally distributed.  There is no identifiable pattern found.
-- Multi Linear Regression (MLR): first add one variable, traing the model and reiterate. In this process, observe the R-squared and P-value. The second method is to add all variables. Then, remove the highest P-value one at a time. Utilize the corresponding high VIF value to identify the next highest variable to drop.  Only drop one at a time.
-- Use Recursive Feature Elimination (RFE) to automate which features to include in training.
+- Simple Linear Regression (SLR): temp displayed a linear red line upward.  The residual analysis depicted via histogram is normally distributed.  There is no identifiable pattern found.
+- Multi Linear Regression (MLR): first add one variable, traing the model and reiterate. In this process, observe the R-squared and P-value. The second method is to add all variables. Then, remove the highest P-value one at a time. Utilize the corresponding high VIF value to identify the next highest variable to drop.  Only drop one at a time. Manual model training is show the following variables contribute to higher bike rental: season, yr, holiday, weekday, weathersit, temp, and windspeed. With that we ended up with 77.8% R-square and 77.9% r2_score.
+- Use Recursive Feature Elimination (RFE) to automate which features to include in training.  After dropping unwanted variables, the R-squared is 80.9% and the r2_score is 78.9%.  The following variables positively contribute to the model: 'season', 'yr','holiday','weekday','temp','hum','windspeed','weathersit_2' and 'weathersit_3'.  
 - Manual selection of variables for training is a tedious job. The automated feature selection is nice, but the computer is not a subject matter expert in your industry. Therefore, a hybrid approach is recommended.
 
 For each of the training method(SLR, MLR, and RFE), plot the error terms, and get r2_score. Also, plot y_test against y_test_pred on a scatter plot.

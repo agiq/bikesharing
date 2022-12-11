@@ -11,7 +11,7 @@ A bike-sharing system is a service in which it made bikes available for shared u
 <!-- You can include any other section that is pertinent to your problem -->
 
 ## General Information
-The objective is to find which variable(s) is/are significant in predicting bike rental 'cnt'.  First, perform exploratory data analysis. 
+There are two analysis. This write up is based on bike.ipynb which perform less optimum compared to bike_dummy_vars.ipynb where I added more dummy variables. The objective is to find which variable(s) is/are significant in predicting bike rental 'cnt'.  First, perform exploratory data analysis. 
 
 - There are 730 rows and 16 columns in this data set.
 - The data set has 8 categorical data and 4 numerical data after data type conversion.
@@ -47,8 +47,9 @@ For model training, validating, and evaluating, we perform simple linear regress
 
 ## Conclusions
 - Simple Linear Regression (SLR): temp displayed a linear red line upward.  The residual analysis depicted via histogram is normally distributed.  There is no identifiable pattern found.
-- Multi Linear Regression (MLR): first add one variable, traing the model and reiterate. In this process, observe the R-squared and P-value. The second method is to add all variables. Then, remove the highest P-value one at a time. Utilize the corresponding high VIF value to identify the next highest variable to drop.  Only drop one at a time. Manual model training is show the following variables contribute to higher bike rental: season, yr, holiday, weekday, weathersit, temp, and windspeed. With that we ended up with 77.8% R-square and 77.9% r2_score.
-- Use Recursive Feature Elimination (RFE) to automate which features to include in training.  After dropping unwanted variables, the R-squared is 80.9% and the r2_score is 78.9%.  The following variables positively contribute to the model: 'season', 'yr','holiday','weekday','temp','hum','windspeed','weathersit_2' and 'weathersit_3'.  
+- Multi Linear Regression (MLR): first add one variable, traing the model and reiterate. In this process, observe the R-squared and P-value. The second method is to add all variables. Then, remove the highest P-value one at a time. Utilize the corresponding high VIF value to identify the next highest variable to drop.  Only drop one at a time. Manual model training is show the following variables contribute to higher bike rental: season, yr, holiday, weekday, weathersit, temp, and windspeed. With that we ended up with 77.8% R-square and 77.9% r2_score. In bike_dummy_vars.ipynb, I added more dummy variable.  The r2_score didn't change but the R2-squared increased from 77.8% to 79.9%.
+- Use Recursive Feature Elimination (RFE) to automate which features to include in training.  After dropping unwanted variables, the R-squared is 80.9% and the r2_score is 78.9%.  After I added more dummy variables in bike_dummy_vars.ipynb, R-squared for RFE jumped from 80.9% to 83% and r2_score increased to 80.3% from 79.9%. 
+- Converting categorical variables into dummy variables increased the r2_score.
 - Manual selection of variables for training is a tedious job. The automated feature selection is nice, but the computer is not a subject matter expert in your industry. Therefore, a hybrid approach is recommended.
 
 For each of the training method(SLR, MLR, and RFE), plot the error terms, and get r2_score. Also, plot y_test against y_test_pred on a scatter plot.
